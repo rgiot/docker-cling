@@ -1,25 +1,29 @@
 FROM ubuntu:15.04
+
 MAINTAINER Tom <tmbdev@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 ENV PATH /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:.
 
-RUN apt-get -qq update
-RUN apt-get -qq update
-RUN apt-get -qqy install apt-utils
-RUN apt-get -qqy install git
-RUN apt-get -qqy install curl
-RUN apt-get -qqy install wget
-RUN apt-get -qqy install unzip
-RUN apt-get -qqy install git-core
-RUN apt-get -qqy install build-essential
-RUN apt-get -qqy install gcc
-RUN apt-get -qqy install g++
-RUN apt-get -qqy install cmake
-RUN apt-get -qqy install gdb
-RUN apt-get -qqy install libreadline-dev
-RUN apt-get -qqy install python
-RUN apt-get -qqy install groff
+# Install necessary packages for cling
+RUN apt-get update && \
+    apt-get upgrade && \
+    apt-get -y install \
+    	apt-utils  \
+	git  \
+	curl  \
+	wget  \
+	unzip  \
+	git-core  \
+	build-essential  \
+	gcc  \
+	g++  \
+	cmake  \
+	gdb  \
+	libreadline-dev  \
+	python  \
+	groff  
 
+# Get and compile cling
 WORKDIR /tmp
 RUN git clone http://root.cern.ch/git/llvm.git src
 WORKDIR /tmp/src
