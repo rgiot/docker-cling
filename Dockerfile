@@ -41,25 +41,24 @@ RUN ./configure \
 RUN make
 RUN make install
 
-RUN apt-get -qqy install python-pip
-RUN apt-get -qqy install libzmq3-dev libcurl4-openssl-dev
-RUN apt-get -qqy install python-dev
-RUN apt-get -qqy install cython
-RUN pip install ipython[notebook]
-RUN apt-get -qqy install libeigen3-dev
+RUN apt-get -qqy install \
+	python3-pip \
+	python3-dev \
+	libzmq3-dev \
+	python3-all-dev \
+	libcurl4-openssl-dev \
+	python3-cxx-dev
 
-# This isn't quite working yet because clingkernel is written
-# to a newer API than what pip install ipython[notebook] installs.
-#WORKDIR /tmp
-#RUN git clone https://github.com/minrk/clingkernel.git
-#RUN cd clingkernel && python setup.py install
-#RUN pip install ipython-extensions
-#RUN pip install ipython-helpers
-#RUN pip install metakernel
-#ADD logo-64x64.png /usr/local/lib/python2.7/dist-packages/metakernel/images/logo-64x64.png
-#ADD logo-32x32.png /usr/local/lib/python2.7/dist-packages/metakernel/images/logo-32x32.png
-#RUN pip install metakernel_bash
-#RUN pip install metakernel_python
-#RUN cd clingkernel && ipython kernelspec install cling
+RUN pip3 install jupyter
+
+# Install cling kernel for ipython
+WORKDIR /tmp
+RUN git clone https://github.com/minrk/clingkernel.git clingkernel
+WORKDIR /tmp/clingkernel
+RUN python3 setup.py install
+RUN jupyter kernelspec install cling
+
+
 
 EXPOSE 8888
+CMD jupyter notebook
