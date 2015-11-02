@@ -1,4 +1,4 @@
-FROM ubuntu:15.04
+FROM ubuntu:15.10
 
 MAINTAINER Tom <tmbdev@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
