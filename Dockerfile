@@ -6,8 +6,7 @@ ENV PATH /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:.
 
 # Install necessary packages for cling
 RUN apt-get update && \
-    apt-get upgrade && \
-    apt-get -y install \
+    apt-get -y --force-yes install \
     	apt-utils  \
 	git  \
 	curl  \
@@ -34,7 +33,11 @@ RUN git clone http://root.cern.ch/git/clang.git
 WORKDIR /tmp/src/tools/clang
 RUN git checkout cling-patches
 WORKDIR /tmp/src
-RUN ./configure --enable-cxx11
+RUN ./configure \
+	--enable-cxx11 \
+	--enable-docs \
+	--enable-optimized \
+	--disable-assertions
 RUN make
 RUN make install
 
