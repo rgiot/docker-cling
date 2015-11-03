@@ -7,7 +7,7 @@ ENV PATH /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:.
 # Install necessary packages for cling
 RUN apt-get update && \
     apt-get -y --force-yes install \
-    	apt-utils  \
+    	apt-utils  \          
 	git  \
 	curl  \
 	wget  \
@@ -19,8 +19,13 @@ RUN apt-get update && \
 	cmake  \
 	gdb  \
 	libreadline-dev  \
-	python  \
-	groff  
+	groff  \
+	python-pip \      
+	python-dev \
+	libzmq3-dev \
+	python3-all-dev \
+	libcurl4-openssl-dev \
+	python-cxx-dev
 
 # Get and compile cling
 WORKDIR /tmp
@@ -35,30 +40,25 @@ RUN git checkout cling-patches
 WORKDIR /tmp/src
 RUN ./configure \
 	--enable-cxx11 \
-	--enable-docs \
+	--disable-docs \
 	--enable-optimized \
-	--disable-assertions
-RUN make
-RUN make install
+	--disable-assertions \
+	--enable-targets=$(dpkg-architecture | grep DEB_TARGET_GNU_CPU | sed -e 's/^.*=//') && \
+    make -j4 && \
+    make install
 
-RUN apt-get -qqy install \
-	python3-pip \
-	python3-dev \
-	libzmq3-dev \
-	python3-all-dev \
-	libcurl4-openssl-dev \
-	python3-cxx-dev
 
-RUN pip3 install jupyter
+RUN pip install tornado && \
+	pip install jupyter
 
 # Install cling kernel for ipython
 WORKDIR /tmp
 RUN git clone https://github.com/minrk/clingkernel.git clingkernel
 WORKDIR /tmp/clingkernel
-RUN python3 setup.py install
-RUN jupyter kernelspec install cling
-
+RUN python setup.py install && \
+	jupyter kernelspec install cling
 
 
 EXPOSE 8888
 CMD jupyter notebook
+
